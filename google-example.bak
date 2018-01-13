@@ -1,13 +1,5 @@
 #lang s-exp saa/google
 
-(define/manifest sekai-manifest
-  (display-name "sekai")
-  (invocation-name "sekai")
-  (short-description "Orders shoes.")
-  (voice-name "male_1")
-  ;long-description
-  )
-
 (define/fulfillment sekai-app
   (url "https://sekai.example.com/sekai-app")
   ;(headers {key1 value1}
@@ -25,7 +17,6 @@
   (fulfillment sekai-app))
 (define/app sekai
   #:main sekai-main
-  (manifest sekai-manifest)
   (actions sekai-buy)
   (conversations
    sekai-app))
