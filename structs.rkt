@@ -1,7 +1,7 @@
 #lang racket
 
-(require syntax/parse/define racket/struct)
-(provide manifest fulfillment action intent)
+(require syntax/parse/define)
+(provide (struct-out manifest) (struct-out fulfillment) (struct-out action) (struct-out intent))
 
 (define-syntax-parser custom-struct
   [(_ name:id (field:id ...) option ...)
