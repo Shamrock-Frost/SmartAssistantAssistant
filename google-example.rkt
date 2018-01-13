@@ -12,7 +12,7 @@
   (require actions.capabilities.AUDIO_OUTPUT)
   (require actions.capabilities.AUDIO_INPUT))
 
-#;(define/fulfillment sekai-app
+(define/fulfillment sekai-app
   (url "https://sekai.example.com/sekai-app")
   ;(headers {key1 value1}
     ;           {key2 value2}) Sekai doesn't use headers

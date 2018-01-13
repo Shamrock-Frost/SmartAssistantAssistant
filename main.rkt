@@ -1,7 +1,7 @@
 #lang racket
 
 (require syntax/parse/define (for-syntax "structs.rkt" racket racket/syntax) "structs.rkt")
-(provide #%app #%datum #%module-begin define/manifest)
+(provide #%app #%datum define/manifest define/fulfillment define/action #%module-begin)
 
 (define-syntax-parser manifest-execute
   [(_ (function:id args:expr ...) manifest)
@@ -20,7 +20,8 @@
     #'(begin
         (define temp-manifest (manifest))
         (manifest-execute form temp-manifest) ...
-        (define name temp-manifest))])
+        (define name temp-manifest)
+        (println name))])
 
 (define-syntax-parser action-execute
   [(_ (function:id args:expr ...) action)
@@ -29,17 +30,32 @@
      ['require-sign-in #'(set-action-sign-in-required! action #t)]
      ['intent (syntax-parse #'(args ...)
                 #:datum-literals (: trigger query-pattern)
-                [(intent-name:id) #'(set-action-intent! action intent-name)]
+                [(intent-name:id) #`(set-action-intent! action 'intent-name)]
                 [((intent-name:id (: arg-name:id type:id) ...)
-                  (trigger (query-pattern pat:id) ...))
-                 #'(set-action-intent! action (intent intent-name
-                                                      (list (list arg-name type) ...)
+                  (trigger (query-pattern pat:string) ...))
+                 #'(set-action-intent! action (intent 'intent-name
+                                                      (list (list 'arg-name 'type) ...)
                                                       (list pat ...)))])]
      [else #`(#,(format-id #'here "set-action-~a!" function-dat) action (first (list args ...)))])])
 
 (define-syntax-parser define/action
-  [(_ name:id form:expr ...)
+  [(_ name:id json-name:string form:expr ...)
    #'(begin
        (define temp-action (action))
+       (set-action-json-name! temp-action json-name)
        (action-execute form temp-action) ...
-       (define name temp-action))])
+       (define name temp-action)
+       (println name))])
+
+(define-syntax-parser define/fulfillment
+  [(_ name:id form:expr ...)
+    #'(begin
+        (define temp-fulfill (fulfillment))
+        (fulfillment-execute form temp-fulfill) ...
+        (define name temp-fulfill)
+        (println name))])
+
+(define-syntax-parser fulfillment-execute
+  [(_ (function args ...) fulfillment)
+   (define function-dat (syntax->datum #'function))
+   #`(#,(format-id #'here "set-fulfillment-~a!" function-dat) fulfillment (first (list args ...)))])

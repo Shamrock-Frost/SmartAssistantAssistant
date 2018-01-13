@@ -17,7 +17,8 @@
   (url api-version headers))
 
 (custom-struct action
-  (fulfillment intent description sign-in-required))
+  (json-name fulfillment intent description sign-in-required))
 
-(custom-struct intent
-  (name parameters trigger))
+(struct intent
+  (name parameters trigger)
+  #:transparent)
