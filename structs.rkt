@@ -20,4 +20,4 @@
   (fulfillment intent description sign-in-required))
 
 (custom-struct intent
-  (parameters trigger))
+  (name parameters trigger))

@@ -18,10 +18,10 @@
     ;           {key2 value2}) Sekai doesn't use headers
   (api-version 2))
 
-#;(define/action sekai-main "MAIN"
+(define/action sekai-main "MAIN"
   (intent actions.intent.MAIN)
   (fulfillment sekai-app))
-#;(define/action sekai-buy "BUY"
+(define/action sekai-buy "BUY"
   (intent (com.example.sekai.BUY (: color SchemaOrg_Color))
           (trigger (query-pattern "find some $SchemaOrg_Color:color sneakers")
                    (query-pattern "buy some blue suede shoes")
