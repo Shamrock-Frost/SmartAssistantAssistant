@@ -3,10 +3,17 @@
 (define/manifest sekai-manifest
   (display-name "sekai")
   (invocation-name "sekai")
-  (short-description "Orders shoes.")
-  (voice-name "male_1")
-  ;long-description
-  )
+  (long-description "Orders shoes.")
+  (voice-name male_1)
+  (full-description "weifiewueWFU")
+  (sample-invocation
+   "ffiuwfj"
+   "dqwqdwijq")
+  (require actions.capabilities.AUDIO_OUTPUT)
+  (require actions.capabilities.AUDIO_INPUT))
+
+#; (define sekai-manifest
+     (manifest "sekai" "sekai" "Orders shoes." "male_1" "weifiewueWFU"))
 
 (define/fulfillment sekai-app
   (url "https://sekai.example.com/sekai-app")
