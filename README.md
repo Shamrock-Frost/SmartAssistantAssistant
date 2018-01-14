@@ -6,7 +6,7 @@ A unified API for creating Alexa Skills and Google Actions
 [SmartAssistantAssistant](smartassistantsquared.org) (SAA) is a racket library/language.
 It is technically three languages: saa-alexa-json, saa-google-json and saa-server.
 
-***saa-alexa-json*** and ***saa-google-json*** are parsed differently but written exactly the same way while ***saa-server*** handles requests from either of the other languages.
+***saa-alexa-json*** and ***saa-google-json*** generate different json, but are written exactly the same way while ***saa-server*** is used to create a server which can handle requests from either Amazon Alexa or Google Home.
 To get your code to compile on the other, simply switch the #lang. 
 No other code changes required!
 
