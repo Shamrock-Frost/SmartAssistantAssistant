@@ -95,8 +95,9 @@
    (define inner-name (null-if-null json-name (format "\"name\": ~v" json-name)))
    (set! url (null-if-null url (format "\"url\": ~v" url)))
    (set! api-version (null-if-null api-version (format "\"fulfillmentApiVersion\": ~a" api-version)))
-   (set! headers (format "\"httpHeaders\": {~a}"
-                         (string-join (map (λ [header] (format "~v: ~v" (first header) (second header))) headers) ", ")))
+   (set! headers (null-if-null headers
+                               (format "\"httpHeaders\": {~a}"
+                                       (string-join (map (λ [header] (format "~v: ~v" (first header) (second header))) headers) ", "))))
    (string-join #:before-first (format "~v: {" json-name) #:after-last "}"
                 (filter (λ [x] (not (null? x))) (list inner-name url api-version headers)) ", ")])
 
