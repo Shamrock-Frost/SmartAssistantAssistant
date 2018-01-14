@@ -1,6 +1,7 @@
 #lang racket
 
-(require web-server/servlet-env syntax/parse/define json web-server/http/request-structs)
+(require web-server/servlet-env syntax/parse/define json
+         web-server/http/request-structs web-server/http/response-structs)
 (provide (all-from-out racket) define-handler/launch-request
          define-handler/intent-request define-handler/session-end
          init-server)
@@ -42,15 +43,29 @@
        (define error (hash-ref req-obj "error" null))
        body ...)])
 
+(define (google-response req handler-ret)
+  (define conversation-token (hash-ref (hash-ref req "conversation") "conversation_token"))
+  (define-values (finished? to-say reprompts card possible-intents) handler-ret)
+  (define json-resp #hash(("conversation_token" . conversation-token)
+                          ("expect_user_response" . (not finished?))
+                          ((if finished? "final_response" "expected_inputs")
+                           . (if finished?
+                                 #hash(("speech_response" . #hash(("text_to_speech" . to-say))))
+                                 #hash(("input_prompt" . #hash(("initial_prompts" . (list #(("text_to_speech" . to-say))))
+                                                               ("no_input_prompts" . (map (λ [re] #(("text_to_speech" . re))) reprompts))))
+                                       ("possible_intents" . (map (λ [int] #hash(("intent" . int))) possible-intents)))))))
+  (response/output (λ [out] (write-bytes (jsexpr->bytes json-resp) out))))
+
 (define (request-handler init-handler intent-handler end-handler)
   (λ [request]
     (define data (bytes->jsexpr (request-post-data/raw request)))
     (if (hash-has-key? data "type")
-        (match (hash-ref data "type")
-          ["IntentHandler" (intent-handler data)]
-          ["LaunchRequest" (init-handler data)]
-          ["SessionEndedRequest" (end-handler data)])
-        (intent-handler data))))
+        (amazon-response data
+                         (match (hash-ref data "type")
+                           ["IntentHandler" (intent-handler data)]
+                           ["LaunchRequest" (init-handler data)]
+                           ["SessionEndedRequest" (end-handler data)]))
+        (google-response data (intent-handler data)))))
 
 (define (init-server port init-handler intent-handler end-handler)
   (serve/servlet (request-handler init-handler intent-handler end-handler) #:port port))
