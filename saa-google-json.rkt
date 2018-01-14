@@ -3,22 +3,27 @@
 (require syntax/parse/define "define-macros.rkt" "structs.rkt")
 (provide #%app #%datum #%module-begin define/manifest define/fulfillment define/action define/app)
 
-(struct app (main-action actions manifest conversations) #:mutable #:transparent)
+(custom-struct app (actions manifest conversations locale))
 
 (define-syntax-parser app-execute
   #:datum-literals (manifest actions conversations)
   [(_ (manifest m) app) #'(set-app-manifest! app m)]
   [(_ (actions action ...) app) #'(set-app-actions! app (list action ...))]
-  [(_ (conversations fulfillment ...) app) #'(set-app-conversations! app (list fulfillment ...))])
+  [(_ (conversations fulfillment ...) app) #'(set-app-conversations! app (list fulfillment ...))]
+  [(_ (locale s:string) app) #'(set-app-locale! app s)])
 
 (define-syntax-parser define/app
-  [(_ _ #:main app-main:expr form:expr ...)
-   #'(begin
-       (define temp-app (app app-main null null null))
+  [(_ name:id #:main app-main:expr form:expr ...)
+   (define dir-name (symbol->string (syntax->datum #'name)))
+   #`(begin
+       (define temp-app (app))
        (app-execute form temp-app) ...
-       (displayln (app->json temp-app)))])
+       (set-app-actions! temp-app (cons app-main (app-actions temp-app)))
+       (make-directory #,dir-name)
+       (displayln (app->json temp-app)
+                  (open-output-file (string-append #,dir-name "/" "action.json"))))])
 
-(define (null-if-null str default) (if (null? str) null default))
+(define-simple-macro (null-if-null str default) (if (null? str) null default))
 
 (define/match (manifest->json man)
   [((manifest display-name invocation-name short-description long-description
@@ -65,9 +70,10 @@
                                               (string-join (map param->json params) ", "))))
    
    (set! trigger (null-if-null trigger (format "\"trigger\": {\"queryPatterns\": [~a]}"
-                                                (string-join (map (λ [x] (format "~v" x)) trigger) ", "))))
+                                                (string-join (map (λ [x] (format "{\"queryPattern\": ~v}" x)) trigger) ", "))))
    (string-join #:before-first "{" #:after-last "}"
-                (filter (λ [x] (not (null? x))) (list name params trigger)) ", ")])
+                (filter (λ [x] (not (null? x))) (list name params trigger)) ", ")]
+  [(name) (format "{\"name\": ~v}" (symbol->string name))])
 
 (define/match (action->json act)
   [((action json-name fulfillment intent description sign-in-required))
@@ -98,11 +104,14 @@
   (define manifest-json
     (let ([man (app-manifest app)])
       (null-if-null man (format "\"manifest\": {~a}" (manifest->json man)))))
+  (define locale-json
+    (let ([loc (app-locale app)])
+      (null-if-null loc (format "\"locale\": ~v" loc))))
   (string-join #:before-first "{" #:after-last "}"
                (filter (λ [x] (not (null? x)))
                        (list (format "\"actions\": [~a]"
                                      (string-join (map action->json (app-actions app)) ", "))
                              (format "\"conversations\": {~a}"
                                      (string-join (map conversation->json (app-conversations app)) ", "))
-                             manifest-json))
+                             manifest-json locale-json))
                ", "))

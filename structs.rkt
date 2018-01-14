@@ -19,7 +19,7 @@
 (custom-struct action
   (json-name fulfillment intent description sign-in-required))
 
-(struct google-intent
+(struct intent
   (name parameters trigger)
   #:transparent)
 
