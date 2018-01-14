@@ -1,8 +1,9 @@
 #lang racket
 
-(require web-server/http syntax/parse/define json)
+(require web-server/servlet-env syntax/parse/define json web-server/http/request-structs)
 (provide (all-from-out racket) define-handler/launch-request
-         define-handler/intent-request define-handler/session-end)
+         define-handler/intent-request define-handler/session-end
+         init-server)
 
 (define-syntax-parser define-handler/launch-request
   [(_ (name:id req-id:id time:id locale:id) body:expr ...+)
@@ -40,3 +41,16 @@
        (define locale (hash-ref req-obj "locale" null))
        (define error (hash-ref req-obj "error" null))
        body ...)])
+
+(define (request-handler init-handler intent-handler end-handler)
+  (λ [request]
+    (define data (bytes->jsexpr (request-post-data/raw request)))
+    (if (hash-has-key? data "type")
+        (match (hash-ref data "type")
+          ["IntentHandler" (intent-handler data)]
+          ["LaunchRequest" (init-handler data)]
+          ["SessionEndedRequest" (end-handler data)])
+        (intent-handler data))))
+
+(define (init-server port init-handler intent-handler end-handler)
+  (serve/servlet (request-handler init-handler intent-handler end-handler) #:port port))
