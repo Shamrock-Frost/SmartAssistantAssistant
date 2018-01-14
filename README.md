@@ -3,7 +3,7 @@ A unified API for creating Alexa Skills and Google Actions
 
 ## Overview
 
-SmartAssistantAssistant (SAA) is a racket library/language. 
+[SmartAssistantAssistant](smartassistantsquared.com) (SAA) is a racket library/language. 
 It's technically two languages, saa-alexa-json and saa-google-json. 
 They're parsed differently, but written exactly the same way. 
 To get your code to compile on the other, simply switch the #lang. 
@@ -27,45 +27,44 @@ The app defines the entire app.
 
 A sample declaration for a manifest might be:
 ```
-(define/manifest sekai-manifest
-  (display-name "sekai")
-  (invocation-name "sekai")
+(define/manifest shoe-manifest
+  (display-name "Shoes")
+  (invocation-name "shoes")
   (long-description "Orders shoes.")
   (voice-name "male_1")
-  (long-description "weifiewueWFU")
   (sample-invocation
-   "ffiuwfj"
-   "dqwqdwijq")
+   "Buy me shoes"
+   "Purchase shoes")
   (require actions.capabilities.AUDIO_OUTPUT)
   (require actions.capabilities.AUDIO_INPUT))
  ```
  
  Likewise, sample declarations for a fulfillment, an action and an app (respectively) will look like:
  ```
- (define/fulfillment sekai-app "sekai-app"
-  (url "https://sekai.example.com/sekai-app")
+ (define/fulfillment shoe-app "shoe-app"
+  (url "https://shoe.example.com/shoe-app")
   (headers #:key1 "value1"
-           #:key2 "value2") ; Sekai doesn't use headers
+           #:key2 "value2")
   (api-version 2))
  ```
  ```
- (define/action sekai-main "MAIN"
+ (define/action shoe-main "MAIN"
   (intent actions.intent.MAIN)
-  (fulfillment sekai-app))
-(define/action sekai-buy "BUY"
-  (intent (com.example.sekai.BUY (: color SchemaOrg_Color))
+  (fulfillment shoe-app))
+(define/action shoe-buy "BUY"
+  (intent (com.example.shoe.BUY (: color SchemaOrg_Color))
           (trigger (query-pattern "find some $SchemaOrg_Color:color sneakers")
                    (query-pattern "buy some blue suede shoes")
                    (query-pattern "get running shoes")))
-  (fulfillment sekai-app))
+  (fulfillment shoe-app))
  ```
  ```
- (define/app sekai
-  #:main sekai-main
-  (manifest sekai-manifest)
-  (actions sekai-buy)
+ (define/app shoe
+  #:main shoe-main
+  (manifest shoe-manifest)
+  (actions shoe-buy)
   (conversations
-   sekai-app))
+   shoe-app))
  ```
 
 ## Credit
