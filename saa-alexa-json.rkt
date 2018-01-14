@@ -4,8 +4,8 @@
 (provide #%app #%datum #%module-begin define/manifest define/fulfillment define/action define/app)
 
 (struct slot (name type))
-(struct alexa-intent (name slots))
-(struct utterance (intent-name raw))
+(struct alexa-intent (name slots) #:transparent)
+(struct utterance (intent-name raw) #:transparent)
 (custom-struct app (intents utterances))
 
 (define/match (handle-action ac ap)
@@ -13,14 +13,14 @@
    (let ([prev-intents (app-intents app)]
          [prev-utterances (app-utterances app)])
      (set-app-intents! app
-      (cons (alexa-intent intent-id
+      (cons (alexa-intent (symbol->string intent-id)
                           (map (λ [syms] (match-let ([(list name ty) (map symbol->string syms)])
                                            (slot name ty)))
                                parameters))
             prev-intents))
      (set-app-utterances! app
-      (append (map (λ [raw] (utterance json-name raw)) trigger)
-              prev-intents)))]
+      (append (map (λ [raw] (utterance (symbol->string intent-id) raw)) trigger)
+              prev-utterances)))]
   [((action json-name _ intent-id _ _) app)
    (set-app-intents! app (cons (alexa-intent intent-id null) (app-intents app)))])
 
