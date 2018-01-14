@@ -1,4 +1,4 @@
-#lang s-exp "main.rkt"
+#lang s-exp "saa-alexa-json.rkt"
 
 ;The manifest defines the app's description (name, description, etc.)
 (define/manifest sekai-manifest
@@ -14,10 +14,10 @@
   (require actions.capabilities.AUDIO_INPUT))
 
 ;The fulfillment points the listener (`action`) to the functional backend
-(define/fulfillment sekai-app
+(define/fulfillment sekai-app "sekai-app"
   (url "https://sekai.example.com/sekai-app")
-  ;(headers {key1 value1}
-    ;           {key2 value2}) Sekai doesn't use headers
+  (headers #:key1 "value1"
+           #:key2 "value2") ; Sekai doesn't use headers
   (api-version 2))
 
 ;The action defines what the app should listen to
@@ -32,7 +32,7 @@
   (fulfillment sekai-app))
 
 ;Defines the app with a manifest, fulfillment, and actions
-;#(define/app sekai
+(define/app sekai
   #:main sekai-main
   (manifest sekai-manifest)
   (actions sekai-buy)

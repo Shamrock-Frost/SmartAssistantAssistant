@@ -1,7 +1,7 @@
 #lang racket
 
 (require syntax/parse/define)
-(provide (struct-out manifest) (struct-out fulfillment) (struct-out action) (struct-out intent))
+(provide (struct-out manifest) (struct-out fulfillment) (struct-out action) (struct-out intent) custom-struct)
 
 (define-syntax-parser custom-struct
   [(_ name:id (field:id ...) option ...)
@@ -14,12 +14,12 @@
    introduction testing-instructions voice-name surface-requirements))
 
 (custom-struct fulfillment
-  (url api-version headers))
+  (json-name url api-version headers))
 
 (custom-struct action
   (json-name fulfillment intent description sign-in-required))
 
-(struct google-intent
+(struct intent
   (name parameters trigger)
   #:transparent)
 
