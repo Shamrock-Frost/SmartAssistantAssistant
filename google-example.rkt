@@ -1,4 +1,4 @@
-#lang s-exp "main.rkt"
+#lang s-exp "saa-google-json.rkt"
 
 (define/manifest sekai-manifest
   (display-name "sekai")
@@ -12,10 +12,10 @@
   (require actions.capabilities.AUDIO_OUTPUT)
   (require actions.capabilities.AUDIO_INPUT))
 
-(define/fulfillment sekai-app
+(define/fulfillment sekai-app "sekai-app"
   (url "https://sekai.example.com/sekai-app")
-  ;(headers {key1 value1}
-    ;           {key2 value2}) Sekai doesn't use headers
+  (headers #:key1 "value1"
+           #:key2 "value2") ; Sekai doesn't use headers
   (api-version 2))
 
 (define/action sekai-main "MAIN"
@@ -27,7 +27,7 @@
                    (query-pattern "buy some blue suede shoes")
                    (query-pattern "get running shoes")))
   (fulfillment sekai-app))
-#;(define/app sekai
+(define/app sekai
   #:main sekai-main
   (manifest sekai-manifest)
   (actions sekai-buy)
