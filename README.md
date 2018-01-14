@@ -9,6 +9,10 @@ They're parsed differently, but written exactly the same way.
 To get your code to compile on the other, simply switch the #lang. 
 No other code changes required!
 
+## How to use
+
+Write your saa-alexa-json or saa-google-json file for your desired skill/action. Then complete a saa-server file to implement.
+
 ## Credit
 
 This project was created for [nwHacks 2018](https://www.nwhacks.io/) with project members:
