@@ -79,3 +79,5 @@ Hazel Pearson - [github](https://github.com/trixiecatsrule)
 Leonardo Walcher - [github](https://github.com/leonardow97)
 
 Samuel Young - [github](https://github.com/young438)
+
+**You can find our website here: https://www.smartassistantsquared.org/**
