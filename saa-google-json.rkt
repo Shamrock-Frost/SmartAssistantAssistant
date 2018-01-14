@@ -70,7 +70,7 @@
                                               (string-join (map param->json params) ", "))))
    
    (set! trigger (null-if-null trigger (format "\"trigger\": {\"queryPatterns\": [~a]}"
-                                                (string-join (map (λ [x] (format "{\"queryPattern\": ~v}" x)) trigger) ", "))))
+                                                (string-join (map (λ [x] (format "~v" x)) trigger) ", "))))
    (string-join #:before-first "{" #:after-last "}"
                 (filter (λ [x] (not (null? x))) (list name params trigger)) ", ")]
   [(name) (format "{\"name\": ~v}" (symbol->string name))])
