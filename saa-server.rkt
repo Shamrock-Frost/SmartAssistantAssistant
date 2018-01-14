@@ -82,4 +82,5 @@
         (google-response data (intent-handler data)))))
 
 (define (init-server port init-handler intent-handler end-handler)
-  (serve/servlet (request-handler init-handler intent-handler end-handler) #:port port))
+  (serve/servlet (request-handler init-handler intent-handler end-handler)
+                 #:port port #:launch-browser? #f #:listen-ip #f))

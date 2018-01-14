@@ -38,5 +38,3 @@
   (actions sekai-buy)
   (conversations
    sekai-app))
-
-(init-server 80 init intent end)
