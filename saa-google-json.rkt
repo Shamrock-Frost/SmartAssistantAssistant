@@ -1,6 +1,6 @@
 #lang racket
 
-(require syntax/parse/define "define-macros.rkt" "structs.rkt")
+(require syntax/parse/define json "define-macros.rkt" "structs.rkt")
 (provide #%app #%datum #%module-begin define/manifest define/fulfillment define/action define/app)
 
 (custom-struct app (actions manifest conversations locale))
