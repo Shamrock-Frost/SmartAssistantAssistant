@@ -19,6 +19,12 @@
 (custom-struct action
   (json-name fulfillment intent description sign-in-required))
 
-(struct intent
+(struct google-intent
   (name parameters trigger)
   #:transparent)
+
+(custom-struct alexa-intent
+  (intent slots sample))
+
+(struct slot
+  (name type) #:transparent)
