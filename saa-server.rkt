@@ -54,7 +54,21 @@
                                  #hash(("input_prompt" . #hash(("initial_prompts" . (list #(("text_to_speech" . to-say))))
                                                                ("no_input_prompts" . (map (λ [re] #(("text_to_speech" . re))) reprompts))))
                                        ("possible_intents" . (map (λ [int] #hash(("intent" . int))) possible-intents)))))))
-  (response/output (λ [out] (write-bytes (jsexpr->bytes json-resp) out))))
+  (response/output (λ [out] (write-bytes (jsexpr->bytes json-resp) out))
+                   #:mime-type "application/json; charset=UTF-8"))
+
+(define (amazon-response req handler-ret)
+  (define-values (finished? to-say reprompts card possible-intents) handler-ret)
+  (define json-resp #hash(("version" . "1") ("sessionAttributes" . #hash())
+                          ("response" . #hash(("outputSpeech" . #hash(("type" . "PlainText") ("text" . to-say)))
+                                              ("card" . #hash(("type" . "Standard")
+                                                              ("title" . (first card))
+                                                              ("content" . (second card))))
+                                              ("reprompt" . #hash(("outputSpeech" . #hash(("type" . "PlainText")
+                                                                                          ("text" . (first reprompts))))))
+                                              ("shouldEndSession" . finished?)))))
+  (response/output (λ [out] (write-bytes (jsexpr->bytes json-resp) out))
+                   #:mime-type "application/json; charset=UTF-8"))
 
 (define (request-handler init-handler intent-handler end-handler)
   (λ [request]
