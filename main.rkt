@@ -1,7 +1,7 @@
 #lang racket
 
 (require syntax/parse/define (for-syntax "structs.rkt" racket racket/syntax) "structs.rkt")
-(provide #%app #%datum define/manifest (struct-out manifest)
+(provide #%app #%datum define/manifest define/fulfillment (struct-out manifest) (struct-out fulfillment)
          (rename-out [saa-module-begin #%module-begin]))
 
 (define-syntax-parser manifest-execute
@@ -23,6 +23,19 @@
         (manifest-execute form temp-manifest) ...
         (define name temp-manifest)
         (println temp-manifest))])
+
+(define-syntax-parser define/fulfillment
+  [(_ name:id form:expr ...)
+    #'(begin
+        (define temp-fulfill (fulfillment))
+        (fulfillment-execute form temp-fulfill) ...
+        (define name temp-fulfill)
+        (println temp-fulfill))])
+
+(define-syntax-parser fulfillment-execute
+  [(_ (function args ...) fulfillment)
+   (define function-dat (syntax->datum #'function))
+   #`(#,(format-id #'here "set-fulfillment-~a!" function-dat) fulfillment (first (list args ...)))])
 
 (define-syntax-parser saa-module-begin
   [(_ prog ...) #'(#%module-begin prog ...)])
