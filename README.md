@@ -13,6 +13,20 @@ No other code changes required!
 
 Write your saa-alexa-json or saa-google-json file for your desired skill/action. Then complete a saa-server file to implement.
 
+**saa-alexa-json and saa-google-json**
+The first important line is your #lang. You can define this as either. In this example, I use Alexa.
+```
+#lang s-exp "saa-alexa-json.rkt"
+```
+
+You need a manifest, a fulfillment, an action, and an app. 
+The manifest defines the app's description (name, description, etc.)
+The fulfillment points the listener (`action`) to the funtional backend
+The aciton defines what the app should listen for
+The app defines the entire app.
+
+A sample declaration might be:
+
 ## Credit
 
 This project was created for [nwHacks 2018](https://www.nwhacks.io/) with project members:
